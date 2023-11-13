@@ -124,3 +124,7 @@ const updatePoints = () => {
     });
     document.getElementById("points-green-text").innerText = greenPoints;
 };
+
+class BodyLock { static lock() { const o = document.body; o.classList.contains("body-locked") !== !0 && (window.innerWidth > document.documentElement.clientWidth && (o.style.overflowY = "scroll"), window.innerHeight > document.documentElement.clientHeight && (o.style.overflowX = "scroll"), Object.assign(o.style, { position: "fixed", top: `-${window.scrollY}px`, left: `-${window.scrollX}px`, right: "0" }), o.classList.add("body-locked")) } static unlock() { const o = document.body; if (o.classList.contains("body-locked") === !1) return; const t = parseInt(o.style.left.replace("px", "") || "0", 10) * -1, e = parseInt(o.style.top.replace("px", "") || "0", 10) * -1; Object.assign(o.style, { position: "", top: "", left: "", right: "", overflowY: "", overflowX: "" }), window.scrollTo(t, e), o.classList.remove("body-locked") } static isLocked() { return document.body.classList.contains("body-locked") } }
+
+BodyLock.lock();
