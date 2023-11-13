@@ -42,7 +42,6 @@ body {
 
 .button {
     background-color: black;
-    border: none;
     border-radius: 6px;
     width: 25%;
     color: white;
@@ -52,12 +51,17 @@ body {
     cursor: pointer;
 }
 
+.button:not(.selected) {
+    border: none;
+}
+
 #hexagon-container {
     display: flex;
     flex-direction: column;
     background-color: black;
     width: 50vh;
-    height: 50vh;
+    aspect-ratio: 1;
+    height: auto;
     align-items: center;
     justify-content: center;
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
@@ -67,13 +71,19 @@ body {
     display: flex;
     justify-content: center;
     width: 100%;
-    height: calc(100% / 5)
+    height: calc(calc(100% - calc(10px * 5)) / 5)
 }
 
 .circle {
-    height: 100%;
+    height: calc(100% - 2.5px);
     aspect-ratio: 1;
     width: auto;
     background-color: grey;
+    text-align: center;
+    font-size: 16px;
     border-radius: 50%;
+}
+
+.selected {
+    border: 2px solid white;
 }
