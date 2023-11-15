@@ -31,6 +31,12 @@ body {
     justify-content: space-between;
 }
 
+.points-container > div {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
 .points-text {
     font-size: 4rem;
     font-weight: bold;
@@ -94,4 +100,19 @@ body {
 
 .selected {
     border: 2px solid white;
+}
+
+.fleurs-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 1rem;
+
+}
+
+.fleurs-text::before {
+    content: "(";
+}
+
+.fleurs-text::after {
+    content: " Fleurs)";
 }

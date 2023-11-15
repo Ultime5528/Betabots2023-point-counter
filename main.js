@@ -55,6 +55,11 @@ class Circle {
         this.element.style.backgroundColor = this.color;
     }
 
+    setColor(color) {
+        this.color = color;
+        this.element.style.backgroundColor = this.color;
+    }
+
     getColor() {
         return this.color
     }
@@ -82,6 +87,13 @@ document.getElementById("yellow-button").addEventListener("click", () => {
     document.getElementById("default-button").classList.remove("selected");
 });
 
+document.getElementById("reset-button").addEventListener("click", () => {
+    circles.forEach((circle) => {
+        circle.setColor(COLORS.DEFAULT);
+    });
+    updatePoints();
+});
+
 document.getElementById("default-button").addEventListener("click", () => {
     selectedColor = COLORS.DEFAULT;
     document.getElementById("default-button").classList.add("selected");
@@ -90,6 +102,23 @@ document.getElementById("default-button").addEventListener("click", () => {
 });
 
 const updatePoints = () => {
+    let greenFlowers = 0;
+    circles.forEach((circle) => {
+        if(circle.isColor(COLORS.GREEN)) {
+            greenFlowers++;
+        }
+    });
+
+    let yellowFlowers = 0;
+    circles.forEach((circle) => {
+        if(circle.isColor(COLORS.YELLOW)) {
+            yellowFlowers++;
+        }
+    });
+
+    document.getElementById("fleurs-green-text").innerText = greenFlowers;
+    document.getElementById("fleurs-yellow-text").innerText = yellowFlowers;
+
     let yellowPoints = 0;
     possiblePositions.forEach((positions) => {
         let allEqual = -1;
