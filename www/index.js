@@ -45,8 +45,10 @@ class Circle {
         this.color = COLORS.DEFAULT;
 
         this.element.addEventListener("click", () => {
-            this.setColorToSelectedColor();
-            updatePoints();
+            if(this.color !== selectedColor) {
+                this.setColorToSelectedColor();
+                updatePoints();
+            }
         });
     }
 

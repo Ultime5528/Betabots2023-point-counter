@@ -34,13 +34,11 @@ const express_1 = __importDefault(require("express"));
 const http = __importStar(require("http"));
 const https = __importStar(require("https"));
 const fs = __importStar(require("fs"));
-let app = (0, express_1.default)();
-let server = config_1.Configuration.ssl ? https.createServer({ key: fs.readFileSync(config_1.Configuration.sslKeyLoc), cert: fs.readFileSync(config_1.Configuration.sslCertLoc) }, app) : http.createServer(app);
-let ws = new ws_1.WebSocketServer(server);
+const app = (0, express_1.default)();
+const server = config_1.Configuration.ssl ? https.createServer({ key: fs.readFileSync(config_1.Configuration.sslKeyLoc), cert: fs.readFileSync(config_1.Configuration.sslCertLoc) }, app) : http.createServer(app);
+const ws = new ws_1.WebSocketServer(server);
 ws.setup();
-ws.start();
-logger_1.Logger.log("Setting up WebServer...");
-let webserver = new webserver_1.WebServer(app);
+const webserver = new webserver_1.WebServer(app);
 webserver.setup();
 server.listen(config_1.Configuration.port, () => {
     logger_1.Logger.log(`Server started on port ${config_1.Configuration.port}`);

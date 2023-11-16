@@ -9,15 +9,13 @@ import * as https from "https";
 import * as fs from "fs";
 
 
-let app: Express = express();
-let server: http.Server | https.Server = Configuration.ssl ? https.createServer({ key: fs.readFileSync(Configuration.sslKeyLoc), cert: fs.readFileSync(Configuration.sslCertLoc) }, app) : http.createServer(app);
+const app: Express = express();
+const server: http.Server | https.Server = Configuration.ssl ? https.createServer({ key: fs.readFileSync(Configuration.sslKeyLoc), cert: fs.readFileSync(Configuration.sslCertLoc) }, app) : http.createServer(app);
 
-let ws: WebSocketServer = new WebSocketServer(server);
+const ws: WebSocketServer = new WebSocketServer(server);
 ws.setup();
-ws.start();
 
-Logger.log("Setting up WebServer...");
-let webserver: WebServer = new WebServer(app);
+const webserver: WebServer = new WebServer(app);
 webserver.setup();
 
 server.listen(Configuration.port, () => {

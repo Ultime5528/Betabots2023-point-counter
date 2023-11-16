@@ -5,6 +5,7 @@ exports.Configuration = {
     port: 3000,
     ssl: false,
     sslKeyLoc: '',
-    sslCertLoc: ''
+    sslCertLoc: '',
+    controllerPass: ""
 };
 //# sourceMappingURL=config.js.map

@@ -1,6 +1,7 @@
 import { Configuration } from "../config";
 import * as express from "express";
 import { Express } from "express";
+import { Logger } from "../logger";
 
 export class WebServer {
     port: number;
@@ -18,7 +19,7 @@ export class WebServer {
     }
 
     setup(): void {
-        console.log('Setting up WebServer...');
+        Logger.log("Setting up WebServer...");
         this.app.use(express.static('www'));
     }
 }

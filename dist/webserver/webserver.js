@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebServer = void 0;
 const config_1 = require("../config");
 const express = __importStar(require("express"));
+const logger_1 = require("../logger");
 class WebServer {
     constructor(app) {
         this.port = config_1.Configuration.port;
@@ -35,7 +36,7 @@ class WebServer {
         this.app = app;
     }
     setup() {
-        console.log('Setting up WebServer...');
+        logger_1.Logger.log("Setting up WebServer...");
         this.app.use(express.static('www'));
     }
 }
