@@ -29,6 +29,107 @@ const possiblePositions = [
     [7,12,16]
 ];
 
+const addLeaderboardTeam = (teamnum) => {
+    if(teamnum == null || teamnum == '') return;
+    
+    let div = document.createElement('div');
+    div.classList.add('matchinfo-row');
+    div.classList.add('leaderboard-row');
+
+    let label = document.createElement('label');
+    label.setAttribute('for', teamnum+'_points');
+    label.innerText = teamnum;
+
+    let input = document.createElement('input');
+    input.setAttribute('placeholder', 'Points');
+    input.setAttribute('name', teamnum+'_points');
+    input.setAttribute('type', 'number');
+    input.setAttribute('min', '0');
+
+    div.appendChild(label);
+    div.appendChild(input);
+
+    document.querySelectorAll('.matchinfo-container > div')[2].appendChild(div);
+}
+
+const getLeaderboard = () => {
+    let leaderboard = {};
+    document.querySelectorAll(".leaderboard-row").forEach((row) => {
+        if(row.querySelector("input").value !== "")
+        leaderboard[row.querySelector("label").innerText] = Number(row.querySelector("input").value);
+    });
+    return leaderboard;
+}
+
+const clearLeaderboard = () => {
+    document.querySelectorAll(".leaderboard-row").forEach((row) => {
+        row.remove();
+    });
+}
+
+const loadMatchConfig = () => {
+    let config = JSON.parse(localStorage.getItem("matchConfig"));
+    if(config) {
+        document.getElementById("match-number").value = config.match;
+        document.getElementById("green-team-number").value = config.teams.green;
+        document.getElementById("yellow-team-number").value = config.teams.yellow;
+        document.getElementById("next-green-number").value = config.nextMatch.green;
+        document.getElementById("next-yellow-number").value = config.nextMatch.yellow;
+        
+        clearLeaderboard();
+        Object.keys(config.leaderboard).forEach((key) => {
+            addLeaderboardTeam(key);
+            document.querySelector("input[name=\""+key+"_points\"]").value = config.leaderboard[key];
+        });
+    }
+}
+
+
+const saveMatchConfig = () => {
+    let config = {
+        match: document.getElementById("match-number").value || 0,
+        teams: {
+            green: document.getElementById("green-team-number").value || "",
+            yellow: document.getElementById("yellow-team-number").value || ""
+        },
+        nextMatch: {
+            green: document.getElementById("next-green-number").value || "",
+            yellow: document.getElementById("next-yellow-number").value || ""
+        },
+        leaderboard: getLeaderboard(),
+    }
+
+    localStorage.setItem("matchConfig", JSON.stringify(config));
+    return config;
+}
+
+document.getElementById("save-match-data").addEventListener("click", () => {
+    websocket.send(JSON.stringify({
+        type: "match",
+        data: saveMatchConfig()
+    }));
+    document.getElementsByClassName('matchinfo')[0].style.display = 'none';
+    loadMatchConfig();
+});
+
+const EnumDeviceType = {
+    LIVE: "LIVE",
+    CONTROLLER: "CONTROLLER",
+}
+
+let websocket = new WebSocket(location.protocol.replace("http", "ws") + "//" + location.host + "/");
+
+websocket.onopen = function() {
+    console.log("Connected to websocket");
+    websocket.send(JSON.stringify({type: "auth", data: {deviceType: EnumDeviceType.CONTROLLER, pass: prompt("Mot de passe: ")}}));
+}
+
+websocket.onclose = function() {
+    console.log("Disconnected from websocket");
+    alert("Déconnecté du serveur");
+    location.reload();
+}
+
 const circles = [];
 
 const COLORS = {
@@ -154,7 +255,26 @@ const updatePoints = () => {
         }
     });
     document.getElementById("points-green-text").innerText = greenPoints;
+
+    websocket.send(JSON.stringify({
+        type: "flowers",
+        data: {
+            flowers_obj: circles.map((circle) => {
+                return circle.getColor();
+            }),
+            points: {
+                green: greenPoints,
+                yellow: yellowPoints
+            },
+            flowers: {
+                green: greenFlowers,
+                yellow: yellowFlowers
+            }
+        }
+    }))
 };
+
+loadMatchConfig();
 
 class BodyLock { static lock() { const o = document.body; o.classList.contains("body-locked") !== !0 && (window.innerWidth > document.documentElement.clientWidth && (o.style.overflowY = "scroll"), window.innerHeight > document.documentElement.clientHeight && (o.style.overflowX = "scroll"), Object.assign(o.style, { position: "fixed", top: `-${window.scrollY}px`, left: `-${window.scrollX}px`, right: "0" }), o.classList.add("body-locked")) } static unlock() { const o = document.body; if (o.classList.contains("body-locked") === !1) return; const t = parseInt(o.style.left.replace("px", "") || "0", 10) * -1, e = parseInt(o.style.top.replace("px", "") || "0", 10) * -1; Object.assign(o.style, { position: "", top: "", left: "", right: "", overflowY: "", overflowX: "" }), window.scrollTo(t, e), o.classList.remove("body-locked") } static isLocked() { return document.body.classList.contains("body-locked") } }
 

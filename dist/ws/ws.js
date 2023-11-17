@@ -61,29 +61,34 @@ class WebSocketServer {
         let deviceType = connectiontypes_1.ConnectionType.UNKNOWN;
         socket.on('message', (message) => {
             const msg = parser_1.MessageParser.parse(message.toString());
-            if (msg.type === "auth" && msg.data.deviceType === connectiontypes_1.ConnectionType.CONTROLLER) {
-                if (config_1.Configuration.controllerPass !== "") {
-                    if (msg.data.pass === config_1.Configuration.controllerPass) {
+            if (!authenticated) {
+                if (msg.type === "auth" && msg.data.deviceType === connectiontypes_1.ConnectionType.CONTROLLER) {
+                    // Controller devices need to authenticate because they can change the data on live devices.
+                    if (config_1.Configuration.controllerPass !== "") {
+                        if (msg.data.pass === config_1.Configuration.controllerPass) {
+                            authenticated = true;
+                            deviceType = msg.data.deviceType;
+                            this.sockets[id][1] = deviceType;
+                            logger_1.Logger.log(`Device of type ${deviceType} authenticated.`);
+                        }
+                        else {
+                            socket.close();
+                        }
+                    }
+                    else {
                         authenticated = true;
                         deviceType = msg.data.deviceType;
                         this.sockets[id][1] = deviceType;
                         logger_1.Logger.log(`Device of type ${deviceType} authenticated.`);
                     }
-                    else {
-                        socket.close();
-                    }
                 }
-                else {
+                else if (msg.type === "auth" && msg.data.deviceType === connectiontypes_1.ConnectionType.LIVE) {
+                    // LIVE devices don't need to authenticate since they are a big screen
                     authenticated = true;
                     deviceType = msg.data.deviceType;
                     this.sockets[id][1] = deviceType;
                     logger_1.Logger.log(`Device of type ${deviceType} authenticated.`);
                 }
-            }
-            else if (msg.type === "auth" && msg.data.deviceType === connectiontypes_1.ConnectionType.LIVE) {
-                deviceType = msg.data.deviceType;
-                this.sockets[id][1] = deviceType;
-                logger_1.Logger.log(`Live device connected.`);
             }
             if (authenticated && deviceType === connectiontypes_1.ConnectionType.CONTROLLER) {
                 if (msg.type === "flowers") {
@@ -108,21 +113,21 @@ class WebSocketServer {
                 }
                 if (msg.type === "match") {
                     /*
-                    timeleft: number
+                    match: number,
                     teams: {
                         yellow: {
-                            teamnumber: number
+                            teamnumber: string
                         },
                         green: {
-                            teamnumber: number
+                            teamnumber: string
                         }
                     }
                     nextMatch: {
                         yellow: {
-                            teamnumber: number
+                            teamnumber: string
                         },
                         green: {
-                            teamnumber: number
+                            teamnumber: string
                         }
                     }
                     */
@@ -135,7 +140,7 @@ class WebSocketServer {
             }
         });
         setTimeout(() => {
-            if (!authenticated && deviceType === connectiontypes_1.ConnectionType.UNKNOWN) {
+            if (deviceType === connectiontypes_1.ConnectionType.UNKNOWN) {
                 socket.send(JSON.stringify({ type: "auth", data: { error: "Timed out." } }));
                 socket.close();
             }

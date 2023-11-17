@@ -17,8 +17,49 @@
                     <span id="fleurs-green-text" class="fleurs-text">0</span>
                 </div>
                 <div>
+                    <button class="modify-match" onclick="document.getElementsByClassName('matchinfo')[0].style.display = '';">Modifier match</button>
+                </div>
+                <div>
                     <span id="points-yellow-text" class="points-text">0</span>
                     <span id="fleurs-yellow-text" class="fleurs-text">0</span>
+                </div>
+            </div>
+            <div class="matchinfo" style="display: none;">
+                <div class="matchinfo-container">
+                    <div>
+                        <h3>Match actuel</h3>
+                        <div class="matchinfo-row">
+                            <input placeholder="# Match" id="match-number" type="text">
+                        </div>
+                        <div class="matchinfo-row">
+                            <input placeholder="# Équipe verte" id="green-team-number" type="text">
+                        </div>
+                        <div class="matchinfo-row">
+                            <input placeholder="# Équipe jaune" id="yellow-team-number" type="text">
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Prochain match</h3>
+                        <div class="matchinfo-row">
+                            <input placeholder="# Équipe Verte" id="next-green-number" type="text">
+                        </div>
+                        <div class="matchinfo-row">
+                            <input placeholder="# Équipe jaune" id="next-yellow-number" type="text">
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Classement</h3>
+                        <button onclick="
+                            let teamnum = prompt('Numéro de l\'équipe');
+                            if (teamnum != null && teamnum != '') {
+                                let team = addLeaderboardTeam(teamnum);
+                            }
+                        ">Add team</button>
+                    </div>
+                </div>
+                <div class="button-container-match">
+                    <button id="save-match-data">Enregistrer</button>
+                    <button onclick="loadMatchConfig(); document.getElementsByClassName('matchinfo')[0].style.display = 'none';" class="cancel-match-changes">Annuler</button>
                 </div>
             </div>
             <div class="prairie-container">
