@@ -76,7 +76,7 @@ export class WebSocketServer {
                         Logger.log(`Device of type ${deviceType} authenticated.`);
                     }
                 } else if(msg.type === "auth" && msg.data.deviceType === ConnectionType.LIVE) {
-                    // LIVE devices don't need to authenticate since they are a big screen
+                    // LIVE devices don't need to authenticate since they are a big screen and thus dont control any data
                     authenticated = true;
                     deviceType = msg.data.deviceType;
                     this.sockets[id][1] = deviceType;
