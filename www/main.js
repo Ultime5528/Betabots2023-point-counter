@@ -28,13 +28,44 @@ const possiblePositions = [
     [7,12,16]
 ];
 
+class WebsocketManager {
+    static queue = {};
+    static frozen = false;
+
+    static freeze() {
+        WebsocketManager.frozen = true;
+    }
+
+    static unfreeze() {
+        WebsocketManager.frozen = false;
+        WebsocketManager.processQueue();
+    }
+
+    static processQueue() {
+        if(WebsocketManager.frozen) return;
+
+        Object.keys(WebsocketManager.queue).forEach(key => {
+            websocket.send(WebsocketManager.queue[key]);
+        });
+        WebsocketManager.queue = {};
+    }
+
+    static send(data) {
+        if(WebsocketManager.frozen) {
+            WebsocketManager.queue[JSON.parse(data).type] = data;
+        } else {
+            WebsocketManager.processQueue();
+            websocket.send(data);
+        }
+    }
+}
+
 const TEAMS = {
     5528: {
         name: "Ultime (A)"
     },
     8255: {
         name: "Ultime (B)",
-        logo: "https://i.imgur.com/5Z3ZQ8u.png"
     },
     5618: {
         name: "PLS"
@@ -82,7 +113,7 @@ const updatePoints = () => {
     document.querySelector(".equipe-a > .pointage").innerText = bluePoints;
     document.querySelector(".equipe-b > .pointage").innerText = redPoints;
 
-    websocket.send(JSON.stringify({
+    WebsocketManager.send(JSON.stringify({
         type: "flowers",
         data: {
             flowers_obj: fleurs.map((fleur) => {
@@ -104,7 +135,21 @@ let websocket = new WebSocket(location.protocol.replace("http", "ws") + "//" + l
 
 websocket.onopen = function() {
     console.log("Connected to websocket");
-    websocket.send(JSON.stringify({type: "auth", data: {deviceType: EnumDeviceType.CONTROLLER, pass: ""}}));
+    WebsocketManager.send(JSON.stringify({type: "auth", data: {deviceType: EnumDeviceType.CONTROLLER, pass: ""}}));
+}
+
+websocket.onmessage = function(event) {
+    const msg = JSON.parse(event.data);
+
+    if(msg.type === "flowers") {
+        fleurs.forEach((fleur, index) => {
+            fleur.setColor(msg.data.flowers_obj[index]);
+        });
+        updatePoints();
+    }
+    if(msg.type === "match") {
+        document.querySelector(".timer > .match").innerText = "MATCH "+msg.data.match;
+    }
 }
 
 websocket.onclose = function() {
@@ -196,7 +241,7 @@ document.querySelector(".timer > .match").addEventListener("click", () => {
     let matchNumber = prompt("Numéro du match");
 
     if(Number.isInteger(parseInt(matchNumber))) {
-        websocket.send(JSON.stringify({
+        WebsocketManager.send(JSON.stringify({
             type: "match",
             data: {
                 match: parseInt(matchNumber)
@@ -205,5 +250,15 @@ document.querySelector(".timer > .match").addEventListener("click", () => {
         document.querySelector(".timer > .match").innerText = "MATCH "+Number(matchNumber);
     } else {
         alert("Numéro de match invalide");
+    }
+});
+
+document.getElementById("freeze-btn").addEventListener("click", () => {
+    if(WebsocketManager.frozen) {
+        WebsocketManager.unfreeze();
+        document.querySelector("#freeze-btn > a > span").innerText = "Freeze";
+    } else {
+        WebsocketManager.freeze();
+        document.querySelector("#freeze-btn > a > span").innerText = "Unfreeze";
     }
 });

@@ -59,6 +59,17 @@ class WebSocketServer {
         let id = this.sockets.push([socket, connectiontypes_1.ConnectionType.UNKNOWN]) - 1;
         let authenticated = false;
         let deviceType = connectiontypes_1.ConnectionType.UNKNOWN;
+        const syncData = () => {
+            if (this.lastFlowers) {
+                socket.send(JSON.stringify(this.lastFlowers));
+            }
+            if (this.lastMatch) {
+                socket.send(JSON.stringify(this.lastMatch));
+            }
+            if (this.lastTeams) {
+                socket.send(JSON.stringify(this.lastTeams));
+            }
+        };
         socket.on('message', (message) => {
             const msg = parser_1.MessageParser.parse(message.toString());
             if (!authenticated) {
@@ -70,6 +81,7 @@ class WebSocketServer {
                             deviceType = msg.data.deviceType;
                             this.sockets[id][1] = deviceType;
                             logger_1.Logger.log(`Device of type ${deviceType} authenticated.`);
+                            syncData();
                         }
                         else {
                             socket.close();
@@ -80,6 +92,7 @@ class WebSocketServer {
                         deviceType = msg.data.deviceType;
                         this.sockets[id][1] = deviceType;
                         logger_1.Logger.log(`Device of type ${deviceType} authenticated.`);
+                        syncData();
                     }
                 }
                 else if (msg.type === "auth" && msg.data.deviceType === connectiontypes_1.ConnectionType.LIVE) {
@@ -88,6 +101,7 @@ class WebSocketServer {
                     deviceType = msg.data.deviceType;
                     this.sockets[id][1] = deviceType;
                     logger_1.Logger.log(`Device of type ${deviceType} authenticated.`);
+                    syncData();
                 }
             }
             if (authenticated && deviceType === connectiontypes_1.ConnectionType.CONTROLLER) {
@@ -106,45 +120,42 @@ class WebSocketServer {
                     }
                     */
                     this.sockets.forEach(s => {
-                        if (s[0] !== socket && s[1] === connectiontypes_1.ConnectionType.LIVE) {
+                        if (s[0] !== socket) {
                             s[0].send(JSON.stringify(msg));
                         }
                     });
+                    this.lastFlowers = msg;
                 }
                 if (msg.type === "match") {
                     /*
-                    match: number,
-                    teams: {
-                        yellow: {
-                            teamnumber: string
-                        },
-                        green: {
-                            teamnumber: string
-                        }
-                    }
-                    nextMatch: {
-                        yellow: {
-                            teamnumber: string
-                        },
-                        green: {
-                            teamnumber: string
-                        }
-                    }
+                    match: number
+                    
                     */
                     this.sockets.forEach(s => {
-                        if (s[0] !== socket && s[1] === connectiontypes_1.ConnectionType.LIVE) {
+                        if (s[0] !== socket) {
                             s[0].send(JSON.stringify(msg));
                         }
                     });
+                    this.lastMatch = msg;
+                }
+                if (msg.type === "teams") {
+                    /*teams: {
+                        yellow: {
+                            teamnumber: string
+                        },
+                        green: {
+                            teamnumber: string
+                        }
+                    }*/
+                    this.sockets.forEach(s => {
+                        if (s[0] !== socket) {
+                            s[0].send(JSON.stringify(msg));
+                        }
+                    });
+                    this.lastTeams = msg;
                 }
             }
         });
-        setTimeout(() => {
-            if (deviceType === connectiontypes_1.ConnectionType.UNKNOWN) {
-                socket.send(JSON.stringify({ type: "auth", data: { error: "Timed out." } }));
-                socket.close();
-            }
-        }, 5000);
     }
 }
 exports.WebSocketServer = WebSocketServer;

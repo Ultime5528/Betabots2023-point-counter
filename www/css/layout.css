@@ -5,6 +5,7 @@ body{
     background: radial-gradient(circle, rgba(255,255,255,1) 50%, rgba(204,204,204,1) 100%);
     font-family:Roboto;
     color:#FFF;
+    -webkit-user-select: none;
 }
 
 .hud{
@@ -290,3 +291,13 @@ table thead td{
 .admin li.reset a{
     background-image:url(../images/balle-reset.svg);
 }
+
+.admin li#freeze-btn a {
+    color: black;
+    background-color: #ccc;
+    text-align: center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+

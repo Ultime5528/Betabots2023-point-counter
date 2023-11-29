@@ -17,6 +17,10 @@ export class WebSocketServer {
     sockets: ws.Socket[];
     wsserver: ws.Server;
 
+    lastFlowers: any;
+    lastMatch: any;
+    lastTeams: any;
+
     constructor(server: http.Server | https.Server) {
         this.port = Configuration.port;
         this.ssl = Configuration.ssl;
@@ -54,6 +58,18 @@ export class WebSocketServer {
         let authenticated = false;
         let deviceType: ConnectionType = ConnectionType.UNKNOWN;
 
+        const syncData = () => {
+            if(this.lastFlowers) {
+                socket.send(JSON.stringify(this.lastFlowers));
+            }
+            if(this.lastMatch) {
+                socket.send(JSON.stringify(this.lastMatch));
+            }
+            if(this.lastTeams) {
+                socket.send(JSON.stringify(this.lastTeams));
+            }
+        }
+
         socket.on('message', (message: Buffer) => {
             const msg = MessageParser.parse(message.toString());
 
@@ -66,6 +82,7 @@ export class WebSocketServer {
                             deviceType = msg.data.deviceType;
                             this.sockets[id][1] = deviceType;
                             Logger.log(`Device of type ${deviceType} authenticated.`);
+                            syncData();
                         } else {
                             socket.close();
                         }
@@ -74,6 +91,7 @@ export class WebSocketServer {
                         deviceType = msg.data.deviceType;
                         this.sockets[id][1] = deviceType;
                         Logger.log(`Device of type ${deviceType} authenticated.`);
+                        syncData();
                     }
                 } else if(msg.type === "auth" && msg.data.deviceType === ConnectionType.LIVE) {
                     // LIVE devices don't need to authenticate since they are a big screen and thus dont control any data
@@ -81,6 +99,7 @@ export class WebSocketServer {
                     deviceType = msg.data.deviceType;
                     this.sockets[id][1] = deviceType;
                     Logger.log(`Device of type ${deviceType} authenticated.`);
+                    syncData();
                 }
             }
             
@@ -100,45 +119,41 @@ export class WebSocketServer {
                     }
                     */
                     this.sockets.forEach(s => {
-                        if(s[0] !== socket && s[1] === ConnectionType.LIVE) {
+                        if(s[0] !== socket) {
                             s[0].send(JSON.stringify(msg));
                         }
                     });
+                    this.lastFlowers = msg;
                 }
                 if(msg.type === "match") {
                     /*
-                    match: number,
-                    teams: {
-                        yellow: {
-                            teamnumber: string
-                        },
-                        green: {
-                            teamnumber: string
-                        }
-                    }
-                    nextMatch: {
-                        yellow: {
-                            teamnumber: string
-                        },
-                        green: {
-                            teamnumber: string
-                        }
-                    }
+                    match: number
+                    
                     */
                     this.sockets.forEach(s => {
-                        if(s[0] !== socket && s[1] === ConnectionType.LIVE) {
+                        if(s[0] !== socket) {
                             s[0].send(JSON.stringify(msg));
                         }
                     });
+                    this.lastMatch = msg;
+                }
+                if(msg.type === "teams") {
+                    /*teams: {
+                        yellow: {
+                            teamnumber: string
+                        },
+                        green: {
+                            teamnumber: string
+                        }
+                    }*/
+                    this.sockets.forEach(s => {
+                        if(s[0] !== socket) {
+                            s[0].send(JSON.stringify(msg));
+                        }
+                    });
+                    this.lastTeams = msg;
                 }
             }
         });
-
-        setTimeout(() => {
-            if(deviceType === ConnectionType.UNKNOWN) {
-                socket.send(JSON.stringify({ type: "auth", data: { error: "Timed out." }}));
-                socket.close();
-            }
-        }, 5000);
     }
 }
