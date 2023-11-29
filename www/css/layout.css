@@ -1,0 +1,292 @@
+@import url('/css/normalize.css');
+
+body{
+    background: rgb(255,255,255);
+    background: radial-gradient(circle, rgba(255,255,255,1) 50%, rgba(204,204,204,1) 100%);
+    font-family:Roboto;
+    color:#FFF;
+}
+
+.hud{
+    background:url(../images/fond-hud.png) center;
+    width:100%;
+    height:240px;
+    position:fixed;
+    bottom:0;
+    left:0;
+}
+.inverse .hud{
+    background:url(../images/fond-hud-inv.png) center;
+}
+.hud ul{
+    background:url(../images/fond-hud-overlay.png) no-repeat center center;
+    width:100%;
+    height:240px;
+    position:fixed;
+    bottom:0;
+    left:0;
+}
+.inverse .hud ul{
+    background:url(../images/fond-hud-overlay-inv.png) no-repeat center center;
+}
+.hud ul .logo{
+    display:block;
+    position:absolute;
+    width:140px;
+    height:140px;
+    background:url(../images/logo-pls.png);
+    background-size: cover;
+    left:30px;
+    top:35px;
+}
+.hud ul .logo-5528{
+    background:url(../images/logo-ultime.png);
+    background-size: cover;
+}
+
+.hud ul .numero{
+    font-size:90px;
+    position:absolute;
+    top:30px;
+    font-weight:900;
+    left:190px;
+}
+.hud ul .nom{
+    font-size:48px;
+    position:absolute;
+    top:120px;
+    font-weight:300;
+    left:190px;
+}
+.hud ul .pointage{
+    font-size:120px;
+    position:absolute;
+    top:20px;
+    font-weight:900;
+    left:50%;
+    margin-left:-270px;
+    letter-spacing: -5px;
+    display: block;
+    width:170px;
+    text-align:center;
+}
+.hud ul .fleur{
+    font-size:48px;
+    position:absolute;
+    top:62px;
+    font-weight:900;
+    left:50%;
+    margin-left:-365px;
+    display: block;
+    width:90px;
+    letter-spacing: -5px;
+    text-align:center;
+}
+
+.hud ul .equipe-b .logo{
+    left:initial;
+    right:30px;
+}
+.hud ul .equipe-b .numero{
+    left:initial;
+    right:190px;
+}
+.hud ul .equipe-b .nom{
+    left:initial;
+    right:190px;
+}
+.hud ul .equipe-b .pointage{
+    margin-left:100px;
+}
+.hud ul .equipe-b .fleur{
+    margin-left:327px;
+}
+
+.hud ul .horloge{
+    font-size:72px;
+    color:#000;
+    position:absolute;
+    top:30px;
+    font-weight:900;
+    left:50%;
+    margin-left:-100px;
+    display: block;
+    width:200px;
+    text-align:center;
+}
+.hud ul .match{
+    font-size:30px;
+    color:#000;
+    position:absolute;
+    top:140px;
+    font-weight:900;
+    left:50%;
+    margin-left:-100px;
+    display: block;
+    width:200px;
+    text-align:center;
+}
+
+.prairie{
+    display:block;
+    width:100%;
+    height:100%;
+    padding-bottom:240px;
+}
+.prairie .contenant{
+    width:100%;
+    height:100%;
+    display:block;
+    position:relative;
+}
+.prairie .contenant:before{
+    content:"";
+    width:10px;
+    height:100%;
+    left:50%;
+    display:block;
+    position:absolute;
+    background:#DDD;
+    margin-left:-5px;
+
+}
+.prairie .contenant .fleurs{
+    width:780px;
+    height:650px;
+    background:url(../images/prairie.svg);
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin:-325px 0 0 -390px;
+    z-index:1000;
+}
+.prairie .contenant .fleurs li{
+    width:120px;
+    height:110px;
+    background:url(../images/fleur.svg);
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin:-55px 0 0 -60px;
+    z-index:1000;
+}
+.prairie .contenant .fleurs li:before{
+    display:block;
+    content:"";
+    width:120px;
+    height:110px;
+}
+.prairie .contenant .fleurs li.bleu:before{background:url(../images/balle-bleu.svg);}
+.prairie .contenant .fleurs li.rouge:before{background:url(../images/balle-rouge.svg);}
+
+.prairie .contenant .fleurs li.fleur-1,
+.prairie .contenant .fleurs li.fleur-2,
+.prairie .contenant .fleurs li.fleur-3{
+    top:12%;
+}
+.prairie .contenant .fleurs li.fleur-1{left:32%;}
+.prairie .contenant .fleurs li.fleur-2{left:50%;}
+.prairie .contenant .fleurs li.fleur-3{left:68%;}
+
+.prairie .contenant .fleurs li.fleur-4,
+.prairie .contenant .fleurs li.fleur-5,
+.prairie .contenant .fleurs li.fleur-6,
+.prairie .contenant .fleurs li.fleur-7{
+    top:31%;
+}
+.prairie .contenant .fleurs li.fleur-4{left:23%;}
+.prairie .contenant .fleurs li.fleur-5{left:41%;}
+.prairie .contenant .fleurs li.fleur-6{left:59%;}
+.prairie .contenant .fleurs li.fleur-7{left:77%;}
+
+.prairie .contenant .fleurs li.fleur-8,
+.prairie .contenant .fleurs li.fleur-9,
+.prairie .contenant .fleurs li.fleur-10,
+.prairie .contenant .fleurs li.fleur-11,
+.prairie .contenant .fleurs li.fleur-12{
+    top:50%;
+}
+.prairie .contenant .fleurs li.fleur-8{left:14%;}
+.prairie .contenant .fleurs li.fleur-9{left:32%;}
+.prairie .contenant .fleurs li.fleur-10{left:50%;}
+.prairie .contenant .fleurs li.fleur-11{left:68%;}
+.prairie .contenant .fleurs li.fleur-12{left:86%;}
+
+.prairie .contenant .fleurs li.fleur-13,
+.prairie .contenant .fleurs li.fleur-14,
+.prairie .contenant .fleurs li.fleur-15,
+.prairie .contenant .fleurs li.fleur-16{
+    top:69%;
+}
+.prairie .contenant .fleurs li.fleur-13{left:23%;}
+.prairie .contenant .fleurs li.fleur-14{left:41%;}
+.prairie .contenant .fleurs li.fleur-15{left:59%;}
+.prairie .contenant .fleurs li.fleur-16{left:77%;}
+
+.prairie .contenant .fleurs li.fleur-17,
+.prairie .contenant .fleurs li.fleur-18,
+.prairie .contenant .fleurs li.fleur-19{
+    top:88%;
+}
+.prairie .contenant .fleurs li.fleur-17{left:32%;}
+.prairie .contenant .fleurs li.fleur-18{left:50%;}
+.prairie .contenant .fleurs li.fleur-19{left:68%;}
+
+
+table{
+    position:absolute;
+    top:30px;
+    left:30px;
+    background:rgba(255,255,255,0.4);
+}
+table td{
+    color:#000;
+    border-bottom:1px solid #999;
+    border-left:1px solid #BBB;
+    font-size:21px;
+    padding:12px;
+    text-transform:uppercase;
+    font-weight:300;
+}
+table td:first-child{
+    border-left:0;
+}
+
+table thead td{
+    font-weight:900;
+    font-size:16px;
+    background:#ccc;
+}
+
+.admin{
+    position:absolute;
+    top:40px;
+    right:40px;
+    z-index: 1000;
+}
+.admin li a{
+    display:block;
+    width:110px;
+    height:110px;
+    background-position:center center;
+    border-radius:50%;
+    border:8px solid #999;
+    margin-bottom:20px;
+    cursor:pointer;
+}
+.admin li.selected a{
+    border:8px solid #000;
+    background-color:#999;
+}
+.admin li.rouge a{
+    background-image:url(../images/balle-rouge.svg);
+}
+.admin li.bleu a{
+    background-image:url(../images/balle-bleu.svg);
+}
+.admin li.aucun a{
+    background-image:url(../images/balle-grise.svg);
+}
+.admin li.reset a{
+    background-image:url(../images/balle-reset.svg);
+}

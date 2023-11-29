@@ -1,74 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Betabots 2023 - Live</title>
-    <link rel="stylesheet" href="live.css">
-</head>
-<body>
-    <div>
-        <div class="terrain">
-            <div id="hexagon-container">
-                <div class="hexagon-row">
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                </div>
-                <div class="hexagon-row">
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                </div>
-                <div class="hexagon-row">
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                </div>
-                <div class="hexagon-row">
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                </div>
-                <div class="hexagon-row">
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                </div>
-            </div>
-        </div>
-        <div class="points">
-            <div>
-                <span id="green-points">0</span>
-                <span id="green-flowers">0</span>
-            </div>
-            <div>
-                <span id="yellow-points">0</span>
-                <span id="yellow-flowers">0</span>
-            </div>
-        </div>
-        <div class="leaderboard">
-            <p style="font-size: 40px; font-weight: bold; line-height:0px;">Classement</p>
+<html>
+    <head>
+        <title>Pollenaction</title>
+        <link href="/css/layout.css" rel="stylesheet" type="text/css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;900&display=swap" rel="stylesheet">        
+    </head>
+    <body>
+        <div class="fond">
             <table>
                 <thead>
                     <tr>
-                        <th>Équipe</th>
-                        <th>Points</th>
+                        <td>Pos.</td>
+                        <td>Équipe</td>
+                        <td>PJ</td>
+                        <td>PC</td>
+                        <td>Fleurs</td>
+                        <td>Pièces</td>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td id="green-team">5528</td>
-                        <td id="green-score">0</td>
-                    </tr>
-                </tbody>
+                <tr>
+                    <td>1</td>
+                    <td>8255</td>
+                    <td>4</td>
+                    <td>8</td>
+                    <td>15</td>
+                    <td>19</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>5618</td>
+                    <td>4</td>
+                    <td>8</td>
+                    <td>15</td>
+                    <td>19</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>5528</td>
+                    <td>4</td>
+                    <td>8</td>
+                    <td>15</td>
+                    <td>19</td>
+                </tr>
             </table>
+            <div class="hud">
+                <ul>
+                    <li class="equipe-a">
+                        <span class="logo logo-5528"></span>
+                        <span class="numero">5528</span>
+                        <span class="nom">Ultime</span>
+                        <span class="pointage">27</span>
+                        <span class="fleur">19</span>
+                    </li>
+                    <li class="timer">
+                        <span class="horloge">3:00</span>
+                        <span class="match">MATCH 12</span>
+                    </li>
+                    <li class="equipe-b">
+                        <span class="logo logo-5618"></span>
+                        <span class="numero">5618</span>
+                        <span class="nom">PLS</span>
+                        <span class="pointage">27</span>
+                        <span class="fleur">19</span>
+                    </li>
+                </ul>
+            </div>            
+            <div class="prairie">
+                <div class="contenant">
+                    <ul class="fleurs">
+                        <li class="fleur-1 bleu"><span></span></li>
+                        <li class="fleur-2"><span></span></li>
+                        <li class="fleur-3"><span></span></li>
+                        <li class="fleur-4 rouge"><span></span></li>
+                        <li class="fleur-5"><span></span></li>
+                        <li class="fleur-6 rouge"><span></span></li>
+                        <li class="fleur-7 rouge"><span></span></li>
+                        <li class="fleur-8"><span></span></li>
+                        <li class="fleur-9"><span></span></li>
+                        <li class="fleur-10 bleu"><span></span></li>
+                        <li class="fleur-11"><span></span></li>
+                        <li class="fleur-12"><span></span></li>
+                        <li class="fleur-13 bleu"><span></span></li>
+                        <li class="fleur-14"><span></span></li>
+                        <li class="fleur-15 bleu"><span></span></li>
+                        <li class="fleur-16"><span></span></li>
+                        <li class="fleur-17"><span></span></li>
+                        <li class="fleur-18"><span></span></li>
+                        <li class="fleur-19"><span></span></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
-    <script src="live.js"></script>
-</body>
+    </body>
 </html>
