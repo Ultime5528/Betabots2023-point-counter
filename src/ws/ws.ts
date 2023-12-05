@@ -110,12 +110,12 @@ export class WebSocketServer {
 
                     ],
                     points: {
-                        yellow: number,
-                        green: number
+                        blue: number,
+                        red: number
                     }
                     flowers: {
-                        yellow: number,
-                        green: number
+                        blue: number,
+                        red: number
                     }
                     */
                     this.sockets.forEach(s => {
@@ -139,10 +139,10 @@ export class WebSocketServer {
                 }
                 if(msg.type === "teams") {
                     /*teams: {
-                        yellow: {
+                        red: {
                             teamnumber: string
                         },
-                        green: {
+                        blue: {
                             teamnumber: string
                         }
                     }*/

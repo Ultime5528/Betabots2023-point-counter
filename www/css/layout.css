@@ -30,21 +30,28 @@ body{
 .inverse .hud ul{
     background:url(../images/fond-hud-overlay-inv.png) no-repeat center center;
 }
-.hud ul .logo{
+.hud ul .logo {
     display:block;
     position:absolute;
     width:140px;
     height:140px;
-    background:url(../images/logo-pls.png);
-    background-size: cover;
     left:30px;
     top:35px;
 }
-.hud ul .logo-5528{
+.hud ul .logo-5618 {
+    background:url(../images/logo-pls.png);
+    background-size: cover;
+}
+.hud ul .logo-5528 {
     background:url(../images/logo-ultime.png);
     background-size: cover;
 }
-
+.equipe-b {
+    cursor: pointer;
+}
+.equipe-a {
+    cursor: pointer;
+}
 .hud ul .numero{
     font-size:90px;
     position:absolute;

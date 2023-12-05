@@ -31,6 +31,11 @@ const possiblePositions = [
 class WebsocketManager {
     static queue = {};
     static frozen = false;
+    static teams = {
+        blue: null,
+        red: null
+    }
+    static teamsModified = false;
 
     static freeze() {
         WebsocketManager.frozen = true;
@@ -47,12 +52,28 @@ class WebsocketManager {
         Object.keys(WebsocketManager.queue).forEach(key => {
             websocket.send(WebsocketManager.queue[key]);
         });
+        if(WebsocketManager.teamsModified) {
+            websocket.send(JSON.stringify({
+                type: "teams",
+                data: {
+                    blue: WebsocketManager.teams.blue,
+                    red: WebsocketManager.teams.red
+                }
+            }));
+            WebsocketManager.teamsModified = false;
+        }
         WebsocketManager.queue = {};
     }
 
     static send(data) {
         if(WebsocketManager.frozen) {
-            WebsocketManager.queue[JSON.parse(data).type] = data;
+            if(JSON.parse(data).type === "teams") {
+                WebsocketManager.teamsModified = true;
+                WebsocketManager.teams.blue = JSON.parse(data).data.blue;
+                WebsocketManager.teams.red = JSON.parse(data).data.red;
+            } else {
+                WebsocketManager.queue[JSON.parse(data).type] = data;
+            }
         } else {
             WebsocketManager.processQueue();
             websocket.send(data);
@@ -62,13 +83,16 @@ class WebsocketManager {
 
 const TEAMS = {
     5528: {
-        name: "Ultime (A)"
+        name: "Ultime (A)",
+        image: "logo-5528"
     },
     8255: {
         name: "Ultime (B)",
+        image: "logo-5528"
     },
     5618: {
-        name: "PLS"
+        name: "PLS",
+        image: "logo-5618"
     }
 }
 
@@ -77,7 +101,7 @@ const EnumDeviceType = {
     CONTROLLER: "CONTROLLER",
 }
 
-const updatePoints = () => {
+const updatePoints = (notsend) => {
     let bluePoints = 0;
     let blueFlowers = 0;
 
@@ -112,7 +136,7 @@ const updatePoints = () => {
     document.querySelector(".equipe-b > .fleur").innerText = redFlowers;
     document.querySelector(".equipe-a > .pointage").innerText = bluePoints;
     document.querySelector(".equipe-b > .pointage").innerText = redPoints;
-
+    if(notsend) return;
     WebsocketManager.send(JSON.stringify({
         type: "flowers",
         data: {
@@ -145,10 +169,34 @@ websocket.onmessage = function(event) {
         fleurs.forEach((fleur, index) => {
             fleur.setColor(msg.data.flowers_obj[index]);
         });
-        updatePoints();
+        updatePoints(true);
     }
     if(msg.type === "match") {
         document.querySelector(".timer > .match").innerText = "MATCH "+msg.data.match;
+    }
+    if(msg.type === "teams") {
+        currentTeams.blue = msg.data.blue;
+        currentTeams.red = msg.data.red;
+        Object.keys(TEAMS).forEach(key => {
+            if(currentTeams.blue)
+            document.querySelector(".equipe-a > .logo").classList.remove(TEAMS[key].image);
+
+            if(currentTeams.red)
+            document.querySelector(".equipe-b > .logo").classList.remove(TEAMS[key].image);
+        });
+        
+
+        if(currentTeams.red) {
+            document.querySelector(".equipe-b > .logo").classList.add(TEAMS[currentTeams.red].image);
+            document.querySelector(".equipe-b > .numero").innerText = currentTeams.red;
+            document.querySelector(".equipe-b > .nom").innerText = TEAMS[currentTeams.red].name;
+        }
+
+        if(currentTeams.blue) {
+            document.querySelector(".equipe-a > .logo").classList.add(TEAMS[currentTeams.blue].image);
+            document.querySelector(".equipe-a > .numero").innerText = currentTeams.blue;
+            document.querySelector(".equipe-a > .nom").innerText = TEAMS[currentTeams.blue].name;
+        }
     }
 }
 
@@ -261,4 +309,63 @@ document.getElementById("freeze-btn").addEventListener("click", () => {
         WebsocketManager.freeze();
         document.querySelector("#freeze-btn > a > span").innerText = "Unfreeze";
     }
+});
+
+let currentTeams = {
+    blue: null,
+    red: null
+}
+
+document.getElementsByClassName("equipe-b")[0].addEventListener("click", () => {
+    let team_num = prompt("Numéro d'équipe rouge: ");
+    if(!Number.isInteger(parseInt(team_num))) {
+        alert("Numéro d'équipe invalide");
+        return;
+    }
+    if(!TEAMS[team_num]) {
+        alert("Équipe non trouvée");
+        return;
+    }
+    currentTeams.red = team_num;
+    Object.keys(TEAMS).forEach(key => {
+        document.querySelector(".equipe-b > .logo").classList.remove(TEAMS[key].image);
+    });
+    document.querySelector(".equipe-b > .logo").classList.add(TEAMS[team_num].image);
+    document.querySelector(".equipe-b > .numero").innerText = team_num;
+    document.querySelector(".equipe-b > .nom").innerText = TEAMS[team_num].name;
+
+    WebsocketManager.send(JSON.stringify({
+        type: "teams",
+        data: {
+            blue: currentTeams.blue,
+            red: currentTeams.red
+        }
+    }));
+});
+
+document.getElementsByClassName("equipe-a")[0].addEventListener("click", () => {
+    let team_num = prompt("Numéro d'équipe bleu: ");
+    if(!Number.isInteger(parseInt(team_num))) {
+        alert("Numéro d'équipe invalide");
+        return;
+    }
+    if(!TEAMS[team_num]) {
+        alert("Équipe non trouvée");
+        return;
+    }
+    currentTeams.blue = team_num;
+    Object.keys(TEAMS).forEach(key => {
+        document.querySelector(".equipe-a > .logo").classList.remove(TEAMS[key].image);
+    });
+    document.querySelector(".equipe-a > .logo").classList.add(TEAMS[team_num].image);
+    document.querySelector(".equipe-a > .numero").innerText = team_num;
+    document.querySelector(".equipe-a > .nom").innerText = TEAMS[team_num].name;
+
+    WebsocketManager.send(JSON.stringify({
+        type: "teams",
+        data: {
+            blue: currentTeams.blue,
+            red: currentTeams.red
+        }
+    }));
 });
