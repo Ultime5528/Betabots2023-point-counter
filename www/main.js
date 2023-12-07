@@ -369,3 +369,85 @@ document.getElementsByClassName("equipe-a")[0].addEventListener("click", () => {
         }
     }));
 });
+
+class Timer {
+    static started = Date.now();
+    static elapsed = 0;
+    static paused = true;
+
+    static reset() {
+        Timer.started = Date.now();
+        Timer.elapsed = 0;
+        Timer.paused = true;
+    }
+
+    static start() {
+        Timer.started = Date.now();
+        Timer.paused = false;
+    }
+
+    static pause() {
+        Timer.elapsed += Date.now() - Timer.started;
+        Timer.paused = true;
+    }
+
+    static getElapsed() {
+        return Timer.paused ? Timer.elapsed : Timer.elapsed + Date.now() - Timer.started;
+    }
+}
+let currTimer = -1;
+
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+document.getElementById("timer-toggle").addEventListener("click", () => {
+    if(currTimer !== -1) {
+        clearInterval(currTimer);
+        currTimer = -1;
+    }
+    if(Timer.paused) {
+        Timer.start();
+        document.getElementById("timer-toggle").innerText = "Pause";
+    } else {
+        Timer.pause();
+        document.getElementById("timer-toggle").innerText = "Start";
+    }
+    currTimer = setInterval(async () => {
+        let elapsed = (document.getElementById("autonomous-mode").value === "autonomous" ? 16000 : 166000)-Timer.getElapsed();
+        let minutes = Math.floor(elapsed / 60000);
+        let seconds = Math.floor((elapsed % 60000) / 1000);
+
+        if(elapsed <= 0) {
+            Timer.reset();
+            if(document.getElementById("autonomous-mode").value === "autonomous") {
+                websocket.send(JSON.stringify({type: "sound", sound: "end_autonomous"}))
+                await wait(2000);
+                document.getElementById("autonomous-mode").value = "teleop";
+                websocket.send(JSON.stringify({type: "sound", sound: "start_teleop"}))
+                Timer.start()
+            } else {
+                document.getElementById("timer-toggle").innerText = "Start";
+                return;
+            }
+        }
+
+        document.querySelector(".timer > .horloge").innerText = minutes+":"+(seconds < 10 ? "0"+seconds : seconds);
+    }, 10);
+});
+document.getElementById("timer-reset").addEventListener("click", () => {
+    if(currTimer !== -1) {
+        clearInterval(currTimer);
+        currTimer = -1;
+    }
+    Timer.reset();
+    document.getElementById("timer-toggle").innerText = "Start";
+});
+document.getElementById("autonomous-mode").addEventListener("change", () => {
+    if(currTimer !== -1) {
+        clearInterval(currTimer);
+        currTimer = -1;
+    }
+    Timer.reset();
+    document.getElementById("timer-toggle").innerText = "Start";
+});

@@ -308,3 +308,20 @@ table thead td{
     justify-content:center;
 }
 
+.timer-ui {
+    color: black;
+    position: absolute;
+    padding: 10px;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+}
+.timer-ui > * {
+    background-color: #fff;
+    border: 0;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
