@@ -154,6 +154,37 @@ class WebSocketServer {
                     });
                     this.lastTeams = msg;
                 }
+                if (msg.type === "sound") {
+                    /*
+                    string
+                    */
+                    this.sockets.forEach(s => {
+                        if (s[0] !== socket && s[1] === connectiontypes_1.ConnectionType.LIVE) {
+                            s[0].send(JSON.stringify(msg));
+                        }
+                    });
+                }
+                if (msg.type === "timer") {
+                    /*
+                    type: string
+                    time: number
+                    */
+                    this.sockets.forEach(s => {
+                        if (s[0] !== socket && s[1] === connectiontypes_1.ConnectionType.LIVE) {
+                            s[0].send(JSON.stringify(msg));
+                        }
+                    });
+                }
+                if (msg.type === "mode") {
+                    /*
+                    string
+                    */
+                    this.sockets.forEach(s => {
+                        if (s[0] !== socket && s[1] === connectiontypes_1.ConnectionType.LIVE) {
+                            s[0].send(JSON.stringify(msg));
+                        }
+                    });
+                }
             }
         });
     }

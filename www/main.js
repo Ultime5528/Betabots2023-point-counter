@@ -159,7 +159,7 @@ let websocket = new WebSocket(location.protocol.replace("http", "ws") + "//" + l
 
 websocket.onopen = function() {
     console.log("Connected to websocket");
-    WebsocketManager.send(JSON.stringify({type: "auth", data: {deviceType: EnumDeviceType.CONTROLLER, pass: ""}}));
+    websocket.send(JSON.stringify({type: "auth", data: {deviceType: EnumDeviceType.CONTROLLER, pass: ""}}));
 }
 
 websocket.onmessage = function(event) {
@@ -374,21 +374,27 @@ class Timer {
     static started = Date.now();
     static elapsed = 0;
     static paused = true;
+    static resetted = true;
 
     static reset() {
         Timer.started = Date.now();
         Timer.elapsed = 0;
         Timer.paused = true;
+        Timer.resetted = true;
+        websocket.send(JSON.stringify({type: "timer", data: {type: "reset", dataTime: Date.now()}}))
     }
 
     static start() {
         Timer.started = Date.now();
         Timer.paused = false;
+        websocket.send(JSON.stringify({type: "timer", data: {type: "start", dataTime: Date.now()}}))
     }
 
     static pause() {
         Timer.elapsed += Date.now() - Timer.started;
+        Timer.resetted = false;
         Timer.paused = true;
+        websocket.send(JSON.stringify({type: "timer", data: {type: "pause", dataTime: Date.now()}}))
     }
 
     static getElapsed() {
@@ -408,26 +414,39 @@ document.getElementById("timer-toggle").addEventListener("click", () => {
     }
     if(Timer.paused) {
         Timer.start();
+        if(Timer.resetted && document.getElementById("autonomous-mode").value === "autonomous") {
+            websocket.send(JSON.stringify({type: "sound", data: "start_auto"}))
+        }
         document.getElementById("timer-toggle").innerText = "Pause";
     } else {
         Timer.pause();
+        websocket.send(JSON.stringify({type: "sound", data: "pause"}))
         document.getElementById("timer-toggle").innerText = "Start";
     }
+    let playedEndGame = false;
     currTimer = setInterval(async () => {
-        let elapsed = (document.getElementById("autonomous-mode").value === "autonomous" ? 16000 : 166000)-Timer.getElapsed();
-        let minutes = Math.floor(elapsed / 60000);
-        let seconds = Math.floor((elapsed % 60000) / 1000);
+        let timeLeft = (document.getElementById("autonomous-mode").value === "autonomous" ? 16000 : 166000)-Timer.getElapsed();
+        let minutes = Math.floor(timeLeft / 60000);
+        let seconds = Math.floor((timeLeft % 60000) / 1000);
 
-        if(elapsed <= 0) {
+        if(!playedEndGame && timeLeft <= 30000 && timeLeft !== 0 && document.getElementById("autonomous-mode").value !== "autonomous") {
+            websocket.send(JSON.stringify({type: "sound", data: "start_endgame"}))
+            playedEndGame = true;
+        }
+
+        if(timeLeft <= 0) {
             Timer.reset();
             if(document.getElementById("autonomous-mode").value === "autonomous") {
-                websocket.send(JSON.stringify({type: "sound", sound: "end_autonomous"}))
-                await wait(2000);
+                websocket.send(JSON.stringify({type: "sound", data: "end"}))
+                await wait(2870);
                 document.getElementById("autonomous-mode").value = "teleop";
-                websocket.send(JSON.stringify({type: "sound", sound: "start_teleop"}))
+                websocket.send(JSON.stringify({type: "mode", data: "teleop"}))
+                websocket.send(JSON.stringify({type: "sound", data: "start_teleop"}))
                 Timer.start()
             } else {
                 document.getElementById("timer-toggle").innerText = "Start";
+                clearInterval(currTimer);
+                websocket.send(JSON.stringify({type: "sound", data: "end"}))
                 return;
             }
         }
@@ -450,4 +469,5 @@ document.getElementById("autonomous-mode").addEventListener("change", () => {
     }
     Timer.reset();
     document.getElementById("timer-toggle").innerText = "Start";
+    websocket.send(JSON.stringify({type: "mode", data: document.getElementById("autonomous-mode").value}))
 });
