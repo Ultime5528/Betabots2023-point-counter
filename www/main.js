@@ -425,7 +425,7 @@ document.getElementById("timer-toggle").addEventListener("click", () => {
     }
     let playedEndGame = false;
     currTimer = setInterval(async () => {
-        let timeLeft = (document.getElementById("autonomous-mode").value === "autonomous" ? 16000 : 166000)-Timer.getElapsed();
+        let timeLeft = (document.getElementById("autonomous-mode").value === "autonomous" ? 15500 : 165500)-Timer.getElapsed();
         let minutes = Math.floor(timeLeft / 60000);
         let seconds = Math.floor((timeLeft % 60000) / 1000);
 

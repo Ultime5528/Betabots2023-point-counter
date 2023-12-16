@@ -151,7 +151,7 @@ class Timer {
 }
 let currentMode = "autonomous";
 setInterval(() => {
-    let timeLeft = (currentMode === "autonomous" ? 16000 : 166000)-Timer.getElapsed();
+    let timeLeft = (currentMode === "autonomous" ? 15500 : 165500)-Timer.getElapsed();
     let minutes = Math.floor(timeLeft / 60000);
     let seconds = Math.floor((timeLeft % 60000) / 1000);
 
