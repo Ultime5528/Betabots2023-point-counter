@@ -68,10 +68,10 @@ websocket.onmessage = function(event) {
         fleurs.forEach((fleur, index) => {
             fleur.setColor(msg.data.flowers_obj[index]);
         });
-        document.querySelector(".equipe-a > .fleur").innerText = msg.data.flowers.red;
-        document.querySelector(".equipe-b > .fleur").innerText = msg.data.flowers.blue;
-        document.querySelector(".equipe-a > .pointage").innerText = msg.data.points.red;
-        document.querySelector(".equipe-b > .pointage").innerText = msg.data.points.blue;
+        document.querySelector(".equipe-b > .fleur").innerText = msg.data.flowers.red;
+        document.querySelector(".equipe-a > .fleur").innerText = msg.data.flowers.blue;
+        document.querySelector(".equipe-b > .pointage").innerText = msg.data.points.red;
+        document.querySelector(".equipe-a > .pointage").innerText = msg.data.points.blue;
     }
     if(msg.type === "match") {
         document.querySelector(".timer > .match").innerText = "MATCH "+msg.data.match;
@@ -81,23 +81,23 @@ websocket.onmessage = function(event) {
         currentTeams.blue = msg.data.blue;
         Object.keys(TEAMS).forEach(key => {
             if(currentTeams.blue)
-            document.querySelector(".equipe-a > .logo").classList.remove(TEAMS[key].image);
+            document.querySelector(".equipe-b > .logo").classList.remove(TEAMS[key].image);
 
             if(currentTeams.red)
-            document.querySelector(".equipe-b > .logo").classList.remove(TEAMS[key].image);
+            document.querySelector(".equipe-a > .logo").classList.remove(TEAMS[key].image);
         });
         
 
         if(currentTeams.red) {
-            document.querySelector(".equipe-a > .logo").classList.add(TEAMS[currentTeams.red].image);
-            document.querySelector(".equipe-a > .numero").innerText = currentTeams.red;
-            document.querySelector(".equipe-a > .nom").innerText = TEAMS[currentTeams.red].name;
+            document.querySelector(".equipe-b > .logo").classList.add(TEAMS[currentTeams.red].image);
+            document.querySelector(".equipe-b > .numero").innerText = currentTeams.red;
+            document.querySelector(".equipe-b > .nom").innerText = TEAMS[currentTeams.red].name;
         }
 
         if(currentTeams.blue) {
-            document.querySelector(".equipe-b > .logo").classList.add(TEAMS[currentTeams.blue].image);
-            document.querySelector(".equipe-b > .numero").innerText = currentTeams.blue;
-            document.querySelector(".equipe-b > .nom").innerText = TEAMS[currentTeams.blue].name;
+            document.querySelector(".equipe-a > .logo").classList.add(TEAMS[currentTeams.blue].image);
+            document.querySelector(".equipe-a > .numero").innerText = currentTeams.blue;
+            document.querySelector(".equipe-a > .nom").innerText = TEAMS[currentTeams.blue].name;
         }
     }
     if(msg.type === "sound") {
@@ -151,7 +151,6 @@ class Timer {
 let currentMode = "autonomous";
 setInterval(() => {
     let timeLeft = (currentMode === "autonomous" ? 15500 : 165500)-Timer.getElapsed();
-
     let minutes = Math.floor(timeLeft / 60000);
     let seconds = Math.floor((timeLeft % 60000) / 1000);
 

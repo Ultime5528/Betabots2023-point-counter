@@ -160,6 +160,7 @@ let websocket = new WebSocket(location.protocol.replace("http", "ws") + "//" + l
 websocket.onopen = function() {
     console.log("Connected to websocket");
     websocket.send(JSON.stringify({type: "auth", data: {deviceType: EnumDeviceType.CONTROLLER, pass: ""}}));
+    websocket.send(JSON.stringify({type: "mode", data: document.getElementById("autonomous-mode").value}));
 }
 
 websocket.onmessage = function(event) {
